@@ -18,26 +18,28 @@ namespace DummyExePlugin
             PluginApi.RegisterGameInstallPlugin(this, versionList);
         }
 
-        public string Install(string installDir, IProgress<double>? progress, IProgress<string>? status)
+        public string Install(string installDir, IProgress<double> progress, IProgress<string> status)
         {
-            status?.Report("Starting installation...");
-            progress?.Report(0);
+            status.Report("Starting installation...");
+            progress.Report(0);
             string finalpath = Path.Combine(installDir, "dummygame.exe");
             MakeDummyExe(finalpath, progress, status);
             return finalpath;
         }
 
-        void MakeDummyExe(string outputPath, IProgress<double>? progress, IProgress<string>? status)
+        void MakeDummyExe(string outputPath, IProgress<double> progress, IProgress<string> status)
         {
             string[] hexValues = hex.Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
             byte[] bytes = new byte[hexValues.Length];
+            status.Report("Converting...");
 
             for (int i = 0; i < hexValues.Length; i++)
             {
                 bytes[i] = Convert.ToByte(hexValues[i], 16);
-                progress?.Report((i + 1) * 100.0 / hexValues.Length);
+                progress.Report((i + 1) * 100.0 / hexValues.Length);
             }
 
+            status.Report("Installing...");
             File.WriteAllBytes(outputPath, bytes);
         }
     }
